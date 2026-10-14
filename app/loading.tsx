@@ -1,0 +1,1 @@
+export default function Loading() { return <div role="status" aria-live="polite"><p className="eyebrow">OPENING THE VAULT</p><h1>Loading collection…</h1><div className="game-grid">{Array.from({ length: 8 }, (_, index) => <div className="skeleton" key={index}/>)}</div></div>; }
