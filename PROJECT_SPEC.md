@@ -1,6 +1,6 @@
 # GameVault – product and implementation specification
 
-**Status:** Project brief approved in principle. Database ER diagram/schema is **not attached or finalized**. **CURRENT PHASE: 1 (UI with typed mock data)**.
+**Status:** Phase 1 completed; Phase 2 design decisions approved and documented in `docs/PHASE_2_PLAN.md`. Original course diagram/report reviewed under their actual filenames. **CURRENT PHASE: 2 planning finalized; runtime remains mock-backed.** No database execution, authentication or CRUD is authorized by this status.
 
 ## 1. Vision
 Build a polished, dark-themed, responsive personal game-library website: a mix of a Steam library overview and a game-backlog tracker. The owner curates a collection, and anyone with the URL can explore it. Focus on browsing experience, individual game information and a few honest statistics. This is a learning project using AI-assisted coding, Git feature branches, React/Next.js, and later Supabase.
@@ -22,10 +22,10 @@ Build a polished, dark-themed, responsive personal game-library website: a mix o
 The database-course model has the following entities and relationships:
 
 ### Game
-- `title`: game title; current academic requirement is uniqueness in combination with developer (see unresolved constraint below)
-- `release_date`: release date
+- `title`: game title; current academic requirement is uniqueness in combination with developer (see approved exact-set constraint below)
+- `release_date`: nullable release date
 - `genres`: multiple genres per game
-- `full_price`: regular/full price (NOT the user's purchase cost)
+- `full_price`: EUR numeric(10,2), regular/full price (NOT the user's purchase cost)
 - `main_platform`: primary gaming platform
 - `playtime_hours`: nonnegative number; `0` if not played
 - `last_played_date`: nullable date
@@ -34,6 +34,7 @@ The database-course model has the following entities and relationships:
 - `id`: identifier
 - `name`: unique developer name
 - `country`: country
+- `founded_year`: nullable founding year
 
 ### Achievement
 - `title`: achievement title
@@ -41,16 +42,16 @@ The database-course model has the following entities and relationships:
 - `unlocked`: boolean
 - `unlocked_date`: nullable date (only if unlocked)
 
-### Relationships / open modeling questions
+### Approved relationships and constraints
 - Game–Developer is **many-to-many**.
-- Achievements belong to games (confirm multiplicity/details with the actual ER diagram later).
-- The academic requirement “game title + developer is unique” needs careful treatment with a many-to-many developer relationship; **do not invent or prematurely implement a database constraint**.
-- Confirm actual field names, relationship cardinalities and SQL normalization after inspecting the course ER diagram.
+- Each achievement belongs to exactly one game; games may have zero achievements. Achievement names are unique within a game.
+- The approved duplicate rule is the same title plus the exact unordered developer set; different combinations are permitted. See `docs/PHASE_2_PLAN.md` for concurrency enforcement.
+- The original diagram/report have been reviewed; see the plan for normalization and documented differences.
 
-### Proposed app-only additions to discuss before DB work
+### Approved app-only extensions
 - `cover_url`: image URL / artwork reference
-- `status`: backlog, playing, completed, paused, dropped (candidate set)
-- `personal_rating`: optional score
+- `status`: exactly Not played, In progress, Completed (freely assignable classifications)
+- `rating`: nullable score; scale must be specified before its constraint is finalized
 - Public record identifier (`id`), timestamps, and ownership configuration as required
 - Do not introduce these into real tables yet; mock types can include them for display.
 
