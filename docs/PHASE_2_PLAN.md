@@ -122,3 +122,7 @@ The designated owner UUID has not been supplied. A private singleton configurati
 ## Trigger review refinement
 
 The unexecuted first schema migration now refreshes only affected OLD/NEW game IDs and validates only affected games/developers, including moved and cascaded links. Global writer serialization and exact-set UNIQUE remain intact. Statement fences skip denied anonymous/authenticated non-owner calls; RLS remains the authorization mechanism. Prepared regression tests check the guard revision, cascades, OLD/NEW sets and immediate constraint mode. See `docs/DATABASE_REVIEW.md`; real local Supabase testing is still blocked by missing Docker/CLI.
+
+## Phase 3 read-only preparation
+
+The owner has postponed administrator Auth/CRUD and will manage real records manually via SQL Editor. The app now selects explicit Supabase or offline mock data sources, without fallback. An additive SECURITY INVOKER read projection returns nested records and bigint IDs as strings; existing schema/RLS files are unchanged. Configuration/manual migration/data-entry instructions are in `docs/SUPABASE_SETUP.md`. No hosted connection or database execution occurred.

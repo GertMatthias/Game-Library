@@ -17,13 +17,13 @@ const records: [string, string, string, string[], string, Status, number, string
 
 // All metadata, developers, prices, progress and achievements are fictional demo values.
 export const mockGames: Game[] = records.map(([id, title, subtitle, genres, platform, status, playtimeHours, releaseDate, cover, symbol], index) => ({
-  id, title, subtitle, genres, platform, status, playtimeHours, releaseDate, cover, symbol,
-  developers: [{ name: `Demo Studio ${index + 1}`, country: ['Estonia', 'Finland', 'Canada'][index % 3] }],
+  id, title, subtitle, genres, platform, status, playtimeHours, releaseDate, cover, symbol, coverUrl: null, rating: null,
+  developers: [{ id: `demo-developer-${index + 1}`, foundedYear: null, name: `Demo Studio ${index + 1}`, country: ['Estonia', 'Finland', 'Canada'][index % 3] }],
   fullPrice: [59.99, 14.99, 24.99, 14.99][index % 4],
   lastPlayedDate: playtimeHours ? '2026-09-28' : null,
   achievements: [
-    { title: 'A new beginning', description: 'Start your first adventure.', unlocked: playtimeHours > 0, unlockedDate: playtimeHours ? '2026-09-01' : null },
-    { title: 'The long road', description: 'Spend twenty hours exploring.', unlocked: playtimeHours >= 20, unlockedDate: playtimeHours >= 20 ? '2026-09-20' : null },
-    { title: 'Closing chapter', description: 'Complete the main story.', unlocked: status === 'Completed', unlockedDate: status === 'Completed' ? '2026-09-28' : null },
+    { id: `${id}-achievement-1`, title: 'A new beginning', description: 'Start your first adventure.', unlocked: playtimeHours > 0, unlockedDate: playtimeHours ? '2026-09-01' : null },
+    { id: `${id}-achievement-2`, title: 'The long road', description: 'Spend twenty hours exploring.', unlocked: playtimeHours >= 20, unlockedDate: playtimeHours >= 20 ? '2026-09-20' : null },
+    { id: `${id}-achievement-3`, title: 'Closing chapter', description: 'Complete the main story.', unlocked: status === 'Completed', unlockedDate: status === 'Completed' ? '2026-09-28' : null },
   ],
 }));

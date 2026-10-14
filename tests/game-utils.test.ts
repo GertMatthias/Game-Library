@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { defaultFilters, filterGames, getStatistics, formatDate, formatPrice } from '../lib/game-utils';
 import { statuses } from '../lib/models';
 import { mockGames } from '../lib/mock-games';
-import { getGameById, listGames } from '../lib/repositories/games';
+import { mockRepository } from '../lib/repositories/mock-games';
+const { getGameById, listGames } = mockRepository;
 test('search is trimmed and case insensitive; filters compose', () => {
   assert.deepEqual(filterGames(mockGames, { ...defaultFilters, search: '  HADES ', status: 'In progress', genre: 'Action', platform: 'PC' }).map(g => g.id), ['hades']);
   assert.equal(filterGames(mockGames, { ...defaultFilters, search: 'hades', platform: 'Switch' }).length, 0);

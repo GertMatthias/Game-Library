@@ -1,6 +1,8 @@
+> For the current SQL-Editor-only workflow, use [manual setup instructions](../docs/SUPABASE_SETUP.md). No CLI, owner Auth account or Docker is required for that workflow. Older local-testing/owner-configuration instructions below are optional future work, not performed by this integration.
+
 # GameVault database review package
 
-**Migrations and database tests are prepared, not applied.** The frontend remains mock-backed. No auth UI, CRUD endpoint or transactional write RPC is included. Never run tests against production.
+**Migrations and database tests are prepared, not applied.** The frontend now has an explicit read-only Supabase mode and an explicit offline mock mode. No auth UI, CRUD endpoint or transactional write RPC is included. Never run tests against production.
 
 ## Files
 
@@ -8,6 +10,8 @@
 | --- | --- |
 | `migrations/20261014000100_gamevault_schema.sql` | Six public tables, private fail-closed administrator configuration, indexes, identity guards, exact-set refresh and deferred membership checks |
 | `migrations/20261014000200_gamevault_rls.sql` | Explicit public reads and UUID-specific owner write policies/grants |
+| `migrations/20261014000300_gamevault_public_reads.sql` | Caller-RLS read projection with lossless string IDs and nested relationships |
+| `examples/add_first_game.sql` | Manual transactional example; not automatic seed data |
 | `tests/database/gamevault.test.sql` | Rollback-only pgTAP constraints, grants and restricted-role RLS tests |
 | `tests/concurrency.py` | Local-only two-session races for duplicates and game/developer minimum participation |
 
