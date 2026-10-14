@@ -30,4 +30,4 @@ No data changes are persisted. There are no write endpoints, admin controls, aut
 
 The finalized [Phase 2 plan](docs/PHASE_2_PLAN.md) records the approved bigint IDs, EUR prices, nullable unknown dates, exact developer-set uniqueness, rating, and single-owner RLS design. Both original course documents have been reviewed under their actual filenames. The app uses exactly **Not played**, **In progress**, and **Completed** as freely assignable classifications. Unknown release dates display as Unknown and sort last.
 
-The running application still uses mock data. No database migrations, authentication or CRUD have been implemented. Next: prepare reviewable schema/RLS migrations and tests on `feature/supabase-schema`; execution against any database requires separate approval.
+The running application still uses mock data. Review-only migrations and prepared database tests are available in [supabase/README.md](supabase/README.md). No migrations have been executed and no authentication or CRUD is connected. Optional ratings use integer values 1?10. Review and local database verification come next; any database execution requires separate approval.

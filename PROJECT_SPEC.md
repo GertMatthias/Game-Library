@@ -1,6 +1,6 @@
 # GameVault – product and implementation specification
 
-**Status:** Phase 1 completed; Phase 2 design decisions approved and documented in `docs/PHASE_2_PLAN.md`. Original course diagram/report reviewed under their actual filenames. **CURRENT PHASE: 2 planning finalized; runtime remains mock-backed.** No database execution, authentication or CRUD is authorized by this status.
+**Status:** Phase 1 completed; Phase 2 design decisions approved and documented in `docs/PHASE_2_PLAN.md`. Original course diagram/report reviewed under their actual filenames. **CURRENT PHASE: 2 review-only schema/RLS migration files and prepared tests; runtime remains mock-backed.** No database execution, authentication or CRUD is authorized by this status.
 
 ## 1. Vision
 Build a polished, dark-themed, responsive personal game-library website: a mix of a Steam library overview and a game-backlog tracker. The owner curates a collection, and anyone with the URL can explore it. Focus on browsing experience, individual game information and a few honest statistics. This is a learning project using AI-assisted coding, Git feature branches, React/Next.js, and later Supabase.
@@ -51,7 +51,7 @@ The database-course model has the following entities and relationships:
 ### Approved app-only extensions
 - `cover_url`: image URL / artwork reference
 - `status`: exactly Not played, In progress, Completed (freely assignable classifications)
-- `rating`: nullable score; scale must be specified before its constraint is finalized
+- `rating`: optional integer 1?10; NULL means unrated
 - Public record identifier (`id`), timestamps, and ownership configuration as required
 - Do not introduce these into real tables yet; mock types can include them for display.
 

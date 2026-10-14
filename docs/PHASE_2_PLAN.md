@@ -1,6 +1,6 @@
 # Phase 2: finalized database plan
 
-Updated 2026-10-14. Owner model decisions are approved. Migration implementation and database execution remain separate steps. The application still uses mock data; this task adds no SQL, Supabase connection, auth or CRUD.
+Updated 2026-10-14. Owner model decisions are approved. Migration implementation and database execution remain separate steps. The application still uses mock data; review-only SQL files and prepared tests now accompany the plan; no database execution, Supabase connection, auth UI or CRUD has occurred.
 
 ## Original model review
 
@@ -20,7 +20,7 @@ The diagram's achievement relationship endpoint symbols appear reversed relative
 - Collection, playtime, statistics and achievements publicly readable; only the verified owner writes. No public registration.
 - Normalize multivalued genre and M:N developers into relational tables. Internal derived integrity keys are implementation metadata.
 
-The report says actually unplayed records have zero hours and no last-played date. Keep that initial-data convention, but do not couple the independently assignable status to recorded hours. Rating scale is the remaining product choice: recommend 0?10 with one decimal, but only nullability has been approved; do not silently finalize its range.
+The report says actually unplayed records have zero hours and no last-played date. Keep that initial-data convention, but do not couple the independently assignable status to recorded hours. Rating is now approved as optional integer values 1?10. NULL means unrated. The schema uses an unscaled numeric CHECK to reject fractional input instead of rounding through an integer cast.
 
 ## Proposed PostgreSQL tables
 
@@ -28,14 +28,14 @@ All fields required unless marked nullable. Entity keys: bigint GENERATED ALWAYS
 
 | Table | Fields and constraints |
 | --- | --- |
-| games | game_id bigint PK; nonblank title text; nullable release_date date; finite nonnegative full_price numeric(10,2) EUR; nonblank platform text; finite nonnegative playtime_hours numeric(10,2) default 0; nullable last_played date; nullable cover_url text; status text default Not played with CHECK allowing exactly the three labels; nullable rating numeric (range/precision pending); internal title_key text and developer_set_key bigint[] |
+| games | game_id bigint PK; nonblank title text; nullable release_date date; finite nonnegative full_price numeric(10,2) EUR; nonblank platform text; finite nonnegative playtime_hours numeric(10,2) default 0; nullable last_played date; nullable cover_url text; status text default Not played with CHECK allowing exactly the three labels; nullable rating numeric, CHECK integer value between 1 and 10; internal title_key text and developer_set_key bigint[] |
 | developers | developer_id bigint identity PK; nonblank unique name text; nullable founded_year smallint (positive four-digit year when known); nonblank country text |
 | game_developers | Required game_id/developer_id bigint FKs; composite PK (game_id, developer_id) |
 | genres | genre_id bigint identity PK; nonblank unique name text |
 | game_genres | Required game_id/genre_id bigint FKs; composite PK (game_id, genre_id) |
 | achievements | achievement_id bigint identity PK; required game_id bigint FK; nonblank name text; description text; unlocked boolean default false; nullable unlock_date date; unique (game_id, normalized name) |
 
-Recommend trimmed/lowercase comparisons for title/name keys, preserving display spelling and punctuation/accents. This normalization is an implementation recommendation for migration review. Use a generated normalized title column for deferrable UNIQUE; name uniqueness may use expression indexes. Reject blanks and nonfinite/negative numeric values explicitly, including NaN. Locked achievements require NULL unlock_date; unlocked achievements may have unknown dates. Rating must be finite and later constrained to the agreed scale. Future-date validation belongs at the write boundary, not in time-dependent CHECKs.
+Recommend trimmed/lowercase comparisons for title/name keys, preserving display spelling and punctuation/accents. This normalization is an implementation recommendation for migration review. Use a generated normalized title column for deferrable UNIQUE; name uniqueness may use expression indexes. Reject blanks and nonfinite/negative numeric values explicitly, including NaN. Locked achievements require NULL unlock_date; unlocked achievements may have unknown dates. Rating must be NULL or an integer value from 1 to 10. Future-date validation belongs at the write boundary, not in time-dependent CHECKs.
 
 Game deletion cascades achievements and junction rows. Referenced developers/genres require explicit unlinking before deletion. Genre minimum is unspecified: allow zero rows. Platform remains one text attribute. Add reverse junction FK indexes; the achievement uniqueness index begins with game_id. No separate statistics, platform, user-library or play-session tables.
 
@@ -89,8 +89,9 @@ Atomic functions use security invoker with narrow EXECUTE grants. Revoke unwante
 
 ## Implementation checklist and gates
 
-- [ ] Decide rating scale; review normalization and reciprocal developer-minimum handling with migration design.
-- [ ] Owner handles this branch; next feature/supabase-schema drafts migrations, constraints/triggers, grants/RLS and tests as reviewable files. Do not seed real records from fictional mock data.
+- [x] Rating scale finalized: optional integer 1?10.
+- [x] Review-only schema/RLS migrations and database tests prepared under `supabase/`.
+- [ ] The `feature/database-schema` branch drafts migrations, constraints/triggers, grants/RLS and tests as reviewable files. Do not seed real records from fictional mock data.
 - [ ] Review exact files, owner UUID provisioning and data-preservation/rollback approach.
 - [ ] Obtain approval for a disposable local database; run integrity/RLS/concurrency tests against the target PostgreSQL version.
 - [ ] Obtain separate explicit approval before applying migrations to hosted Supabase or changing Auth settings.
@@ -110,4 +111,14 @@ Atomic functions use security invoker with narrow EXECUTE grants. Revoke unwante
 
 ## Readiness
 
-Ready to draft Phase 2 schema/RLS migrations and tests. Rating range remains explicit follow-up before finalizing that CHECK. No database security/integrity tests have been implemented or run yet; reviewed migrations and separate database-execution approval remain required. The current application continues to use typed mock data.
+Phase 2 schema/RLS migrations, pgTAP tests and a two-session concurrency suite are now prepared for review. No database tests or migrations have been executed; separate local/hosted execution approval remains required. The current application continues to use typed mock data.
+
+## Schema implementation refinement
+
+The review package is in `supabase/README.md`. For this small single-owner collection, statement triggers use one private row-write fence before all membership-graph mutations instead of per-game/developer locking. This serializes concurrent graph writers and prevents stale-snapshot membership checks; the deferred exact-set UNIQUE still arbitrates duplicate game identities. This is a deliberate simpler implementation of the plan's concurrency requirement. Database behavior remains unexecuted and must pass the prepared local tests before application.
+
+The designated owner UUID has not been supplied. A private singleton configuration starts NULL; RLS denies all client writes until a trusted administrator configures a verified existing Auth UUID. This refines the original fixed-policy UUID approach without permitting client role management. Signup prevention requires Supabase Auth configuration in addition to SQL; no remote settings were changed.
+
+## Trigger review refinement
+
+The unexecuted first schema migration now refreshes only affected OLD/NEW game IDs and validates only affected games/developers, including moved and cascaded links. Global writer serialization and exact-set UNIQUE remain intact. Statement fences skip denied anonymous/authenticated non-owner calls; RLS remains the authorization mechanism. Prepared regression tests check the guard revision, cascades, OLD/NEW sets and immediate constraint mode. See `docs/DATABASE_REVIEW.md`; real local Supabase testing is still blocked by missing Docker/CLI.
