@@ -11,3 +11,5 @@
 - 2026-10-14: Prepared schema/RLS migrations and database tests on `feature/database-schema` from refreshed main. Rating is optional integer 1?10 (fractional values rejected). A private row-write fence serializes membership changes; a deferred exact-set UNIQUE prevents duplicate games. Missing owner UUID is represented by NULL private configuration, denying client writes. No database execution or application integration.
 
 - 2026-10-14: Trigger review scopes recalculation/validation to affected parent IDs while retaining the global writer fence and deferred uniqueness. Denied non-owner statements skip guard writes. Added regression tests; PostgreSQL 18.1 binaries found, but Docker/Supabase CLI unavailable, so real local database verification remains pending.
+
+- 2026-10-14: Phase 3 read-only Supabase preparation; admin Auth/CRUD postponed, records managed manually through SQL Editor. Added a SECURITY INVOKER public read projection for nested records and lossless bigint IDs. Server-only anonymous client; explicit mock mode, no silent fallback. No database connection or migration execution.

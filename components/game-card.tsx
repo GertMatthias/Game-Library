@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import type { Game } from '@/lib/models';
+import { CoverImage } from './cover-image';
 export function Cover({ game, large = false }: { game: Game; large?: boolean }) {
-  return <div className={`cover ${large ? 'cover-large' : ''}`} style={{ '--cover-color': game.cover } as CSSProperties}><span className="cover-orbit"/><span className="cover-symbol" aria-hidden="true">{game.symbol}</span><span className="cover-caption">GAMEVAULT / DEMO ART</span><div className="cover-title">{game.title}</div><span className="cover-platform">{game.platform}</span></div>;
+  return <div className={`cover ${large ? 'cover-large' : ''}`} style={{ '--cover-color': game.cover } as CSSProperties}><span className="cover-orbit"/><span className="cover-symbol" aria-hidden="true">{game.symbol}</span><span className="cover-caption">GAMEVAULT / PLACEHOLDER ART</span><div className="cover-title">{game.title}</div><CoverImage url={game.coverUrl}/><span className="cover-platform">{game.platform}</span></div>;
 }
 export function StatusBadge({ status }: { status: Game['status'] }) { return <span className={`status status-${status.toLowerCase().replaceAll(' ', '-')}`}><span aria-hidden="true">●</span> {status}</span>; }
 export function GameCard({ game }: { game: Game }) {

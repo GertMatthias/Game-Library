@@ -1,6 +1,6 @@
 # GameVault – product and implementation specification
 
-**Status:** Phase 1 completed; Phase 2 design decisions approved and documented in `docs/PHASE_2_PLAN.md`. Original course diagram/report reviewed under their actual filenames. **CURRENT PHASE: 2 review-only schema/RLS migration files and prepared tests; runtime remains mock-backed.** No database execution, authentication or CRUD is authorized by this status.
+**Status:** Phase 3 read-only Supabase preparation authorized. Runtime supports explicit Supabase or offline mock mode. Administrator Auth/CRUD postponed; owner manages records manually in SQL Editor. No remote execution or Auth changes authorized. Existing database tests remain unexecuted.
 
 ## 1. Vision
 Build a polished, dark-themed, responsive personal game-library website: a mix of a Steam library overview and a game-backlog tracker. The owner curates a collection, and anyone with the URL can explore it. Focus on browsing experience, individual game information and a few honest statistics. This is a learning project using AI-assisted coding, Git feature branches, React/Next.js, and later Supabase.
